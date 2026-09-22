@@ -1,0 +1,9 @@
+.env
+.env.example
+data/
+bot_run.log
+__pycache__/
+*.pyc
+.git/
+.claude/
+CLAUDE.md
