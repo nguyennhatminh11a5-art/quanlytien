@@ -142,6 +142,28 @@ def get_average(day: int | None = None, month: int | None = None, year: int | No
     return total_in // num_days, total_out // num_days, num_days
 
 
+def get_daily_net(month: int, year: int) -> list[tuple[int, int]]:
+    """Chênh lệch thu-chi (net) theo từng ngày trong tháng, dùng để vẽ biểu đồ.
+
+    Trả về list (ngày, net) cho mọi ngày từ 1 đến hôm nay (nếu là tháng hiện tại)
+    hoặc hết tháng (nếu là tháng đã qua) — kể cả ngày không có giao dịch (net=0),
+    để trục ngày trên biểu đồ liên tục.
+    """
+    today = datetime.now().date()
+    last_day = today.day if (year == today.year and month == today.month) else calendar.monthrange(year, month)[1]
+
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT strftime('%d', created_at), COALESCE(SUM(amount), 0) FROM transactions "
+            "WHERE strftime('%Y', created_at) = ? AND strftime('%m', created_at) = ? "
+            "GROUP BY strftime('%d', created_at)",
+            (f"{year:04d}", f"{month:02d}"),
+        ).fetchall()
+
+    net_by_day = {int(d): net for d, net in rows}
+    return [(d, net_by_day.get(d, 0)) for d in range(1, last_day + 1)]
+
+
 def get_top_expenses(day: int | None = None, month: int | None = None, year: int | None = None, limit: int = 5):
     """Top khoản chi (amount âm) lớn nhất trong khoảng lọc, lớn nhất trước."""
     conditions, params = _date_conditions(day, month, year)

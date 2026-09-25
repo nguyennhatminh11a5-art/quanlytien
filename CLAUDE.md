@@ -10,7 +10,9 @@ Dự án trước đây trong thư mục này (app Java Swing quản lý user, M
 
 Bot Telegram quản lý thu chi cá nhân — **1 người dùng, không phân biệt user/chat**. Gõ lệnh trực tiếp trong Telegram để cộng/trừ tiền, xem số dư và lịch sử giao dịch.
 
-Ngoài bot, có thêm **web dashboard chỉ-xem** (`src/web.py`) — xem số dư/thống kê/lịch sử trực quan hơn, **không** thêm/sửa/xoá giao dịch (việc đó vẫn qua bot). Chỉ mở trên `localhost:5000`, không có đăng nhập — quyết định có chủ đích vì đây là dữ liệu tài chính cá nhân, không expose ra mạng ngoài.
+Ngoài bot, có thêm **web dashboard chỉ-xem** (`src/web.py`) — xem số dư/thống kê/lịch sử/biểu đồ trực quan hơn, **không** thêm/sửa/xoá giao dịch (việc đó vẫn qua bot). Chỉ mở trên `localhost:5000`, không có đăng nhập — quyết định có chủ đích vì đây là dữ liệu tài chính cá nhân, không expose ra mạng ngoài.
+
+Dashboard có biểu đồ cột chênh lệch thu-chi theo ngày trong tháng (`src/chart.py`, SVG vẽ server-side, không phụ thuộc JS) và bar-list top 5 khoản chi. Màu xanh/đỏ (`#3987e5`/`#e66767`) là cặp diverging đã chạy qua `dataviz` skill validator (CVD-safe, contrast đạt trên nền tối `#1a1d24`) — **không tự đổi màu này** nếu không chạy lại validator.
 
 ## 1b. Access control
 
@@ -33,7 +35,8 @@ Bot chạy polling công khai — để tránh người khác gõ lệnh vào d�
 src/
 ├── bot.py         # entry point bot Telegram, đăng ký command handler
 ├── web.py         # entry point web dashboard (Flask), chỉ-xem
-├── storage.py     # SQLite: init schema, add_transaction, get_balance, get_history, get_stats, get_average, get_top_expenses
+├── storage.py     # SQLite: init schema, add_transaction, get_balance, get_history, get_stats, get_average, get_top_expenses, get_daily_net
+├── chart.py       # vẽ SVG biểu đồ server-side (cột chênh lệch thu-chi theo ngày) cho web.py
 ├── dateparse.py   # parse bộ lọc ngày/tháng/năm dùng chung giữa bot.py và web.py
 └── templates/     # HTML cho web dashboard (base.html, dashboard.html, history.html)
 data/

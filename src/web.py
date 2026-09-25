@@ -9,6 +9,7 @@ from datetime import datetime
 from flask import Flask, render_template, request
 
 import storage
+from chart import daily_net_svg
 from dateparse import parse_date_filter
 
 app = Flask(__name__)
@@ -28,6 +29,9 @@ def dashboard():
     total_in, total_out = storage.get_stats(month=today.month, year=today.year)
     avg_in, avg_out, num_days = storage.get_average(month=today.month, year=today.year)
     top_expenses = storage.get_top_expenses(month=today.month, year=today.year, limit=5)
+    daily_net = storage.get_daily_net(today.month, today.year)
+    max_expense = max((-amount for _, amount, _, _ in top_expenses), default=0)
+
     return render_template(
         "dashboard.html",
         active="dashboard",
@@ -38,6 +42,8 @@ def dashboard():
         avg_out=avg_out,
         num_days=num_days,
         top_expenses=top_expenses,
+        max_expense=max_expense,
+        daily_net_chart=daily_net_svg(daily_net),
         thang=today.month,
         nam=today.year,
     )

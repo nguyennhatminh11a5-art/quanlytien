@@ -29,15 +29,34 @@
   </div>
 </div>
 
+<h2>Chênh lệch thu - chi theo ngày</h2>
+{% if daily_net_chart %}
+<div class="chart-card">
+  <div class="legend">
+    <span class="legend-item"><i class="dot blue"></i> Thu &gt; chi</span>
+    <span class="legend-item"><i class="dot red"></i> Chi &gt; thu</span>
+  </div>
+  {{ daily_net_chart | safe }}
+</div>
+{% else %}
+<div class="empty">Chưa có dữ liệu tháng này.</div>
+{% endif %}
+
 <h2>Top 5 khoản chi lớn nhất tháng này</h2>
 {% if top_expenses %}
-<table>
-  <tr><th>Ngày</th><th>Ghi chú</th><th>Số tiền</th></tr>
+<table class="bar-table">
   {% for _id, amount, note, created_at in top_expenses %}
   <tr>
-    <td>{{ created_at }}</td>
-    <td>{{ note or "-" }}</td>
-    <td class="amount red">{{ amount | money }} đ</td>
+    <td class="bar-table-label">
+      <div class="bar-table-note">{{ note or "(không ghi chú)" }}</div>
+      <div class="bar-table-date">{{ created_at }}</div>
+    </td>
+    <td class="bar-table-bar">
+      <div class="bar-track">
+        <div class="bar-fill" style="width: {{ ((-amount) / max_expense * 100) if max_expense else 0 }}%"></div>
+      </div>
+    </td>
+    <td class="amount red bar-table-amount">{{ amount | money }} đ</td>
   </tr>
   {% endfor %}
 </table>
