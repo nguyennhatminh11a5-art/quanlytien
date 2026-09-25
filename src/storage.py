@@ -12,7 +12,9 @@ DB_PATH = Path(os.environ["MONEY_DB_PATH"]) if os.environ.get("MONEY_DB_PATH") e
 
 def _connect() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    return sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    return conn
 
 
 def init_db() -> None:

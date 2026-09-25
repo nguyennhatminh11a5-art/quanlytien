@@ -1,7 +1,6 @@
 """Bot Telegram quản lý thu chi cá nhân. Entry point: python src/bot.py"""
 
 import os
-import re
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -10,15 +9,12 @@ from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandl
 from telegram.request import HTTPXRequest
 
 import storage
+from dateparse import parse_date_filter
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 ALLOWED_CHAT_ID = int(os.environ["ALLOWED_CHAT_ID"])
-
-DATE_RE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
-MONTH_RE = re.compile(r"^(\d{1,2})/(\d{4})$")
-YEAR_RE = re.compile(r"^(\d{4})$")
 
 
 def _is_allowed(update: Update) -> bool:
@@ -38,17 +34,6 @@ def _parse_amount(raw: str) -> int | None:
     if 0 < amount < 1000:
         amount *= 1000
     return amount
-
-
-def _parse_date_filter(arg: str) -> tuple[int | None, int | None, int | None] | None:
-    """Parse ngày (dd/mm/yyyy), tháng (mm/yyyy) hoặc năm (yyyy). Trả về None nếu sai định dạng."""
-    if m := DATE_RE.match(arg):
-        return int(m.group(1)), int(m.group(2)), int(m.group(3))
-    if m := MONTH_RE.match(arg):
-        return None, int(m.group(1)), int(m.group(2))
-    if m := YEAR_RE.match(arg):
-        return None, None, int(m.group(1))
-    return None
 
 
 HELP_TEXT = (
@@ -121,7 +106,7 @@ async def ls(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     day = month = year = None
     if context.args:
-        parsed = _parse_date_filter(context.args[0])
+        parsed = parse_date_filter(context.args[0])
         if parsed is None:
             await update.message.reply_text(
                 "Định dạng không hợp lệ. Dùng: ngày (22/09/2026), tháng (09/2026) hoặc năm (2026)."
@@ -148,7 +133,7 @@ async def thongke(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     day = month = year = None
     if context.args:
-        parsed = _parse_date_filter(context.args[0])
+        parsed = parse_date_filter(context.args[0])
         if parsed is None:
             await update.message.reply_text(
                 "Định dạng không hợp lệ. Dùng: ngày (22/09/2026), tháng (09/2026) hoặc năm (2026)."
@@ -172,7 +157,7 @@ async def trungbinh(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     day = month = year = None
     if context.args:
-        parsed = _parse_date_filter(context.args[0])
+        parsed = parse_date_filter(context.args[0])
         if parsed is None:
             await update.message.reply_text(
                 "Định dạng không hợp lệ. Dùng: ngày (22/09/2026), tháng (09/2026) hoặc năm (2026)."
@@ -206,7 +191,7 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     day = month = year = None
     if date_arg is not None:
-        parsed = _parse_date_filter(date_arg)
+        parsed = parse_date_filter(date_arg)
         if parsed is None:
             await update.message.reply_text(
                 "Định dạng không hợp lệ. Dùng: ngày (22/09/2026), tháng (09/2026) hoặc năm (2026)."

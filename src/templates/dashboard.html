@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Tổng quan - Thu chi cá nhân{% endblock %}
+{% block content %}
+
+<div class="grid">
+  <div class="card">
+    <div class="label">Số dư hiện tại</div>
+    <div class="value">{{ balance | money }} đ</div>
+  </div>
+  <div class="card">
+    <div class="label">Tổng cộng tháng {{ thang }}/{{ nam }}</div>
+    <div class="value green">+{{ total_in | money }} đ</div>
+  </div>
+  <div class="card">
+    <div class="label">Tổng trừ tháng {{ thang }}/{{ nam }}</div>
+    <div class="value red">-{{ total_out | money }} đ</div>
+  </div>
+</div>
+
+<h2>Trung bình mỗi ngày ({{ num_days }} ngày đã qua trong tháng)</h2>
+<div class="grid">
+  <div class="card">
+    <div class="label">Cộng / ngày</div>
+    <div class="value green">+{{ avg_in | money }} đ</div>
+  </div>
+  <div class="card">
+    <div class="label">Trừ / ngày</div>
+    <div class="value red">-{{ avg_out | money }} đ</div>
+  </div>
+</div>
+
+<h2>Top 5 khoản chi lớn nhất tháng này</h2>
+{% if top_expenses %}
+<table>
+  <tr><th>Ngày</th><th>Ghi chú</th><th>Số tiền</th></tr>
+  {% for _id, amount, note, created_at in top_expenses %}
+  <tr>
+    <td>{{ created_at }}</td>
+    <td>{{ note or "-" }}</td>
+    <td class="amount red">{{ amount | money }} đ</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Chưa có khoản chi nào tháng này.</div>
+{% endif %}
+
+{% endblock %}

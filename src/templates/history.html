@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Lịch sử - Thu chi cá nhân{% endblock %}
+{% block content %}
+
+<form class="filter" method="get" action="/history">
+  <input type="text" name="loc" value="{{ filter_arg }}" placeholder="Vd: 22/09/2026, 09/2026, 2026 - để trống xem gần nhất">
+  <button type="submit">Lọc</button>
+</form>
+<div class="hint">Định dạng: ngày (dd/mm/yyyy), tháng (mm/yyyy), năm (yyyy). Để trống = 20 giao dịch gần nhất.</div>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% elif rows %}
+<table>
+  <tr><th>Ngày</th><th>Ghi chú</th><th>Số tiền</th></tr>
+  {% for _id, amount, note, created_at in rows %}
+  <tr>
+    <td>{{ created_at }}</td>
+    <td>{{ note or "-" }}</td>
+    <td class="amount {{ 'green' if amount >= 0 else 'red' }}">
+      {{ '+' if amount >= 0 else '' }}{{ amount | money }} đ
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<div class="empty">Không có giao dịch nào.</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,27 @@
+services:
+  bot:
+    build: .
+    container_name: money-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MONEY_DB_PATH: /data/money.db
+    volumes:
+      - money_bot_data:/data
+    command: python src/bot.py
+
+  web:
+    build: .
+    container_name: money-web
+    restart: unless-stopped
+    environment:
+      MONEY_DB_PATH: /data/money.db
+    volumes:
+      - money_bot_data:/data
+    command: python src/web.py
+    ports:
+      - "127.0.0.1:5000:5000"
+
+volumes:
+  money_bot_data:
+    external: true

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Quản lý thu chi{% endblock %}</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #1a1d24;
+    --text: #e6e6e6;
+    --muted: #9aa0aa;
+    --green: #35c37d;
+    --red: #e6543f;
+    --accent: #4f8cff;
+    --border: #2a2e37;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    padding: 0 16px 40px;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { font-size: 20px; margin: 0; }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 16px;
+    font-size: 14px;
+  }
+  nav a.active, nav a:hover { color: var(--accent); }
+  .container { max-width: 720px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card .label { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+  .card .value { font-size: 22px; font-weight: 600; }
+  .value.green { color: var(--green); }
+  .value.red { color: var(--red); }
+  h2 { font-size: 16px; color: var(--muted); font-weight: 500; margin: 28px 0 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 500; }
+  .amount.green { color: var(--green); }
+  .amount.red { color: var(--red); }
+  form.filter { margin-bottom: 16px; display: flex; gap: 8px; }
+  form.filter input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 6px;
+    flex: 1;
+  }
+  form.filter button {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .error { color: var(--red); margin-bottom: 12px; }
+  .empty { color: var(--muted); padding: 20px 0; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: -8px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>💰 Thu chi cá nhân</h1>
+    <nav>
+      <a href="/" class="{{ 'active' if active == 'dashboard' else '' }}">Tổng quan</a>
+      <a href="/history" class="{{ 'active' if active == 'history' else '' }}">Lịch sử</a>
+    </nav>
+  </header>
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>
